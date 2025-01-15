@@ -74,19 +74,13 @@ export async function POST(req: Request) {
     const pngFiles = await getAllPngFiles(extractDir);
     const invalidFiles = await getInvalidFiles(extractDir);
 
+    // Generate image URLs
     const imageUrls = pngFiles.map((filePath) =>
       `/uploads/${path.basename(zipPath, '.zip')}/${path.relative(extractDir, filePath)}`
     );
 
-    // Auto-delete files after 10 minutes
-    // setTimeout(async () => {
-    //   try {
-    //     await fs.rm(extractDir, { recursive: true, force: true });
-    //     console.log(`Deleted extracted files in: ${extractDir}`);
-    //   } catch (err) {
-    //     console.error(`Failed to delete extracted files: ${extractDir}`, err);
-    //   }
-    // }, 10 * 60 * 1000);
+    // Generate the imagesDirPath
+    const imagesDirPath = `public/uploads/${path.basename(zipPath, '.zip')}/images`;
 
     if (imageUrls.length === 0) {
       return NextResponse.json({
@@ -99,12 +93,16 @@ export async function POST(req: Request) {
         path.relative(extractDir, filePath)
       );
       return NextResponse.json({
+        imagesDirPath,
         images: imageUrls,
         warning: `Some files were not displayed because they are not PNG images: ${invalidFileNames.join(', ')}`,
       });
     }
 
-    return NextResponse.json({ images: imageUrls });
+    return NextResponse.json({
+      imagesDirPath,
+      images: imageUrls
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'File upload failed.' }, { status: 500 });
