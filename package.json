@@ -12,12 +12,16 @@
     "adm-zip": "^0.5.16",
     "formidable": "^3.5.2",
     "image-type": "^5.2.0",
+    "multer": "^1.4.5-lts.1",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/adm-zip": "^0.5.7",
+    "@types/formidable": "^3.4.5",
+    "@types/multer": "^1.4.12",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
