@@ -5,12 +5,11 @@ import Image from 'next/image';
 const UploadPage = () => {
     const [originalImages, setOriginalImages] = useState<string[]>([]);
     const [grayscaleImages, setGrayscaleImages] = useState<string[]>([]);
-    const [imagesDirPath, setImagesDirPath] = useState<string | null>(null);  // 🆕 Added state for imagesDirPath
+    const [imagesDirPath, setImagesDirPath] = useState<string | null>(null);  
     const [warning, setWarning] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // Upload ZIP and preview original images
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file && file.type === 'application/zip') {
@@ -23,12 +22,12 @@ const UploadPage = () => {
                 body: formData,
             });
 
-            const data = await response.json(); // contains imagesDirPath
+            const data = await response.json();
 
             if (response.ok) {
-                setOriginalImages(data.images);  // Show original images
-                setImagesDirPath(data.imagesDirPath);  // 🆕 Store imagesDirPath
-                setGrayscaleImages([]);         // Clear previous grayscale images
+                setOriginalImages(data.images);  
+                setImagesDirPath(data.imagesDirPath);  
+                setGrayscaleImages([]);         
                 setWarning(data.warning || null);
                 setError(null);
             } else {
@@ -40,7 +39,6 @@ const UploadPage = () => {
         }
     };
 
-    // Apply grayscale and show processed images
     const handleGrayscale = async () => {
         if (!imagesDirPath) {
             setError('No uploaded images to process.');
@@ -58,15 +56,26 @@ const UploadPage = () => {
     
         const data = await response.json();
         if (response.ok) {
-            console.log(data.grayscaleImages)
-            setGrayscaleImages(data.grayscaleImages);  // Now organized by session
+            setGrayscaleImages(data.grayscaleImages); 
             setError(null);
         } else {
             setError(data.error);
         }
         setLoading(false);
     };
-    
+
+    const handleDownload = () => {
+        if (!grayscaleImages.length) {
+            setError('No grayscale images available for download.');
+            return;
+        }
+        let sanitizedImagesDirPath = imagesDirPath?.replace('public', '') || '';
+        sanitizedImagesDirPath = sanitizedImagesDirPath.replace('/images', '') || '';
+        const downloadLink = document.createElement('a');
+        downloadLink.href = `${sanitizedImagesDirPath}/processedImages/grayscale_images.zip`; 
+        downloadLink.download = 'grayscale_images.zip'; 
+        downloadLink.click();
+    };
     return (
         <div>
             <h1>Upload ZIP of PNG Images</h1>
@@ -74,8 +83,6 @@ const UploadPage = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {warning && <p style={{ color: 'orange' }}>{warning}</p>}
             {loading && <p>Processing...</p>}
-
-            {/* Original Images */}
             {originalImages.length > 0 && (
                 <div>
                     <h2>Original Images</h2>
@@ -95,15 +102,11 @@ const UploadPage = () => {
                     </div>
                 </div>
             )}
-
-            {/* Grayscale Button */}
             {originalImages.length > 0 && grayscaleImages.length === 0 && (
                 <button onClick={handleGrayscale} style={{ marginTop: '20px' }}>
                     Apply Grayscale
                 </button>
             )}
-
-            {/* Grayscaled Images */}
             {grayscaleImages.length > 0 && (
                 <div>
                     <h2>Grayscale Images</h2>
@@ -121,10 +124,12 @@ const UploadPage = () => {
                             </div>
                         ))}
                     </div>
+                    <button onClick={handleDownload} style={{ marginTop: '20px' }}>
+                        Download Grayscale Images
+                    </button>
                 </div>
             )}
         </div>
     );
 };
-
 export default UploadPage;

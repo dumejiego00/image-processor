@@ -1,9 +1,8 @@
 import { promises as fs, createReadStream, createWriteStream } from 'fs';
 import path from 'path';
 import { PNG } from 'pngjs';
-import AdmZip from 'adm-zip'; // Replaced require with import
+import AdmZip from 'adm-zip'; 
 
-// Grayscale conversion for all PNG files
 export async function grayScaleImages(inputDir: string, outputDir: string) {
   const files = await fs.readdir(inputDir);
   const pngFiles = files.filter(file => path.extname(file).toLowerCase() === '.png');
@@ -12,7 +11,6 @@ export async function grayScaleImages(inputDir: string, outputDir: string) {
     await grayScale(path.join(inputDir, file), path.join(outputDir, file));
   }
 
-  // ZIP processed images
   const zip = new AdmZip();
   pngFiles.forEach(file => {
     zip.addLocalFile(path.join(outputDir, file));
@@ -21,12 +19,11 @@ export async function grayScaleImages(inputDir: string, outputDir: string) {
   zip.writeZip(path.join(outputDir, 'grayscale_images.zip'));
 }
 
-// Grayscale conversion for a single PNG
 function grayScale(inputPath: string, outputPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     createReadStream(inputPath)
       .pipe(new PNG())
-      .on('parsed', function (this: PNG) {  // Explicitly typed `this`
+      .on('parsed', function (this: PNG) {  
         for (let y = 0; y < this.height; y++) {
           for (let x = 0; x < this.width; x++) {
             const idx = (this.width * y + x) << 2;

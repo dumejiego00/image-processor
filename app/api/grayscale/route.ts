@@ -11,7 +11,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No images directory path provided.' }, { status: 400 });
     }
 
-    // 1️⃣ Remove the `/images` suffix and add `/processedImages`
     const baseDir = imagesDirPath.endsWith('/images')
       ? imagesDirPath.replace('/images', '')
       : imagesDirPath;
@@ -19,10 +18,8 @@ export async function POST(req: Request) {
     const processedDir = path.join(baseDir, 'processedImages');
     await fs.mkdir(processedDir, { recursive: true });
 
-    // 2️⃣ Process images into the `/processedImages` folder
     await grayScaleImages(imagesDirPath, processedDir);
 
-    // 3️⃣ Read and return processed images
     const grayscaleImages = (await fs.readdir(processedDir))
     .filter(file => file.toLowerCase().endsWith('.png'))
     .map(file => `${processedDir.split('public')[1].replace(/\\/g, '/')}/${file}`);

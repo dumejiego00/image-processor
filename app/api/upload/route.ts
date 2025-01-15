@@ -9,14 +9,13 @@ export const config = {
   },
 };
 
-// Helper: Recursively scan for PNG files
 const getAllPngFiles = async (dir: string): Promise<string[]> => {
   const dirents = await fs.readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
     dirents.map(async (dirent) => {
       const res = path.resolve(dir, dirent.name);
       if (dirent.isDirectory() && dirent.name !== '__MACOSX') {
-        return getAllPngFiles(res);  // Recursively scan
+        return getAllPngFiles(res);  
       } else if (dirent.isFile() && path.extname(dirent.name).toLowerCase() === '.png') {
         return res;
       } else {
@@ -27,7 +26,6 @@ const getAllPngFiles = async (dir: string): Promise<string[]> => {
   return Array.prototype.concat(...files);
 };
 
-// Helper: Find non-PNG files (excluding `__MACOSX`)
 const getInvalidFiles = async (dir: string): Promise<string[]> => {
   const dirents = await fs.readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
@@ -45,7 +43,6 @@ const getInvalidFiles = async (dir: string): Promise<string[]> => {
   return Array.prototype.concat(...files);
 };
 
-// POST handler
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -70,16 +67,13 @@ export async function POST(req: Request) {
     const zip = new AdmZip(zipPath);
     zip.extractAllTo(extractDir, true);
 
-    // Get all PNG files recursively
     const pngFiles = await getAllPngFiles(extractDir);
     const invalidFiles = await getInvalidFiles(extractDir);
 
-    // Generate image URLs
     const imageUrls = pngFiles.map((filePath) =>
       `/uploads/${path.basename(zipPath, '.zip')}/${path.relative(extractDir, filePath)}`
     );
 
-    // Generate the imagesDirPath
     const imagesDirPath = `public/uploads/${path.basename(zipPath, '.zip')}/images`;
 
     if (imageUrls.length === 0) {
