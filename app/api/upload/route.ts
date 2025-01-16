@@ -74,7 +74,9 @@ export async function POST(req: Request) {
       `/uploads/${path.basename(zipPath, '.zip')}/${path.relative(extractDir, filePath)}`
     );
 
-    const imagesDirPath = `public/uploads/${path.basename(zipPath, '.zip')}/images`;
+    const originalFileName = path.parse(file.name).name;
+    const imagesDirPath = `public/uploads/${path.basename(zipPath, '.zip')}/${originalFileName}`;
+
 
     if (imageUrls.length === 0) {
       return NextResponse.json({

@@ -11,9 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No images directory path provided.' }, { status: 400 });
     }
 
-    const baseDir = imagesDirPath.endsWith('/images')
-      ? imagesDirPath.replace('/images', '')
-      : imagesDirPath;
+    const baseDir = path.dirname(imagesDirPath);
 
     const processedDir = path.join(baseDir, 'processedImages');
     await fs.mkdir(processedDir, { recursive: true });

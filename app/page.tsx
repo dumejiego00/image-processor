@@ -70,15 +70,23 @@ const UploadPage = () => {
             return;
         }
         let sanitizedImagesDirPath = imagesDirPath?.replace('public', '') || '';
-        sanitizedImagesDirPath = sanitizedImagesDirPath.replace('/images', '') || '';
+        sanitizedImagesDirPath = sanitizedImagesDirPath.substring(0, sanitizedImagesDirPath.lastIndexOf('/'));
+    
         const downloadLink = document.createElement('a');
         downloadLink.href = `${sanitizedImagesDirPath}/processedImages/grayscale_images.zip`; 
         downloadLink.download = 'grayscale_images.zip'; 
         downloadLink.click();
+        console.log(`${sanitizedImagesDirPath}/processedImages/grayscale_images.zip`)
     };
+    
     return (
         <div>
             <h1>Upload ZIP of PNG Images</h1>
+            <p><strong>Note:</strong></p>
+                <ul>
+                <li>Only include <strong>.png</strong> files at the top level of the ZIP.</li>
+                <li>Do not rename the ZIP file after compression.</li>
+                </ul>
             <input type="file" accept=".zip" onChange={handleFileChange} />
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {warning && <p style={{ color: 'orange' }}>{warning}</p>}
