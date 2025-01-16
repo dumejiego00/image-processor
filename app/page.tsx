@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 
 const buttonStyles = { 
@@ -19,6 +19,7 @@ const disabledButtonStyles = {
 
 const UploadPage = () => {
     const [isHovered, setIsHovered] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
@@ -105,9 +106,11 @@ const UploadPage = () => {
         setImagesDirPath(null);
         setError(null);
         setWarning(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
     
-
     return (
         <div>
             <h1>Upload ZIP of PNG Images</h1>
@@ -116,14 +119,14 @@ const UploadPage = () => {
                 <li>Only include <strong>.png</strong> files at the top level of the ZIP.</li>
                 <li>Do not rename the ZIP file after compression.</li>
                 </ul>
-            <input type="file" accept=".zip" onChange={handleFileChange} />
+            <input type="file" accept=".zip" onChange={handleFileChange} ref={fileInputRef} />
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {warning && <p style={{ color: 'orange' }}>{warning}</p>}
             {loading && <p>Processing...</p>}
             {originalImages.length > 0 && (
                 <div>
                     <h2>Original Images</h2>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px', paddingBottom: '20px' }}>
                         {originalImages.map((img: string, index: number) => (
                             <div key={`original-${index}`}>
                                 <Image
@@ -158,7 +161,7 @@ const UploadPage = () => {
             {grayscaleImages.length > 0 && (
                 <div>
                     <h2>Grayscale Images</h2>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px', paddingBottom: '20px' }}>
                         {grayscaleImages.map((img: string, index: number) => (
                             <div key={`grayscale-${index}`}>
                                 <Image
@@ -172,29 +175,34 @@ const UploadPage = () => {
                             </div>
                         ))}
                     </div>
-                    <button
-                        onClick={handleDownload}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        style={{
-                            ...buttonStyles,
-                            backgroundColor: isHovered ? '#4A90E2' : '#357ABD', 
-                            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                        }}
-                        disabled={loading}
-                    >
-                        Download Grayscale Images
-                    </button>
-                    <button
-                        onClick={handleNewUpload}
-                        style={{
-                            ...buttonStyles,
-                            backgroundColor:'#28a745', 
-                        }}
-                    >
-                        New Upload
-                    </button>
-
+                    <div style={{paddingBottom: '20px'}}>
+                        <div style={{display: 'flex'}}>
+                            <div style={{paddingRight: '10px'}}>
+                                <button
+                                    onClick={handleDownload}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                    style={{
+                                        ...buttonStyles,
+                                        backgroundColor: isHovered ? '#4A90E2' : '#357ABD', 
+                                        transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                                    }}
+                                    disabled={loading}
+                                >
+                                    Download Grayscale Images
+                                </button>
+                            </div>    
+                            <button
+                                onClick={handleNewUpload}
+                                style={{
+                                    ...buttonStyles,
+                                    backgroundColor:'#28a745', 
+                                }}
+                            >
+                                New Upload
+                            </button>
+                        </div>
+                    </div>    
                 </div>
             )}
         </div>
