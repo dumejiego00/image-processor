@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-const buttonStyles = {
-    backgroundColor: '#4A90E2', 
+const buttonStyles = { 
     color: '#fff', 
     padding: '5px 10px', 
     borderRadius: '5px', 
@@ -100,6 +99,15 @@ const UploadPage = () => {
         console.log(`${sanitizedImagesDirPath}/processedImages/grayscale_images.zip`)
     };
     
+    const handleNewUpload = () => {
+        setOriginalImages([]);
+        setGrayscaleImages([]);
+        setImagesDirPath(null);
+        setError(null);
+        setWarning(null);
+    };
+    
+
     return (
         <div>
             <h1>Upload ZIP of PNG Images</h1>
@@ -177,6 +185,16 @@ const UploadPage = () => {
                     >
                         Download Grayscale Images
                     </button>
+                    <button
+                        onClick={handleNewUpload}
+                        style={{
+                            ...buttonStyles,
+                            backgroundColor:'#28a745', 
+                        }}
+                    >
+                        New Upload
+                    </button>
+
                 </div>
             )}
         </div>
