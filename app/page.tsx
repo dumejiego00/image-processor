@@ -2,7 +2,28 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+const buttonStyles = {
+    backgroundColor: '#4A90E2', 
+    color: '#fff', 
+    padding: '5px 10px', 
+    borderRadius: '5px', 
+    border: 'none', 
+    cursor: 'pointer', 
+    fontSize: '16px', 
+    transition: 'background-color 0.3s',
+};
+
+const disabledButtonStyles = {
+    cursor: 'not-allowed', 
+    backgroundColor: '#B0C9E5', 
+};
+
 const UploadPage = () => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => setIsHovered(true);
+    const handleMouseLeave = () => setIsHovered(false);
+
     const [originalImages, setOriginalImages] = useState<string[]>([]);
     const [grayscaleImages, setGrayscaleImages] = useState<string[]>([]);
     const [imagesDirPath, setImagesDirPath] = useState<string | null>(null);  
@@ -111,7 +132,18 @@ const UploadPage = () => {
                 </div>
             )}
             {originalImages.length > 0 && grayscaleImages.length === 0 && (
-                <button onClick={handleGrayscale} style={{ marginTop: '20px' }}>
+                <button
+                    onClick={handleGrayscale}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    style={{
+                        ...buttonStyles,
+                        ...(loading ? disabledButtonStyles : {}),
+                        backgroundColor: isHovered ? '#FF3B2B' : '#FF6F61', 
+                        transform: isHovered ? 'scale(1.05)' : 'scale(1)', 
+                    }}
+                    disabled={loading}
+                >
                     Apply Grayscale
                 </button>
             )}
@@ -132,7 +164,17 @@ const UploadPage = () => {
                             </div>
                         ))}
                     </div>
-                    <button onClick={handleDownload} style={{ marginTop: '20px' }}>
+                    <button
+                        onClick={handleDownload}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        style={{
+                            ...buttonStyles,
+                            backgroundColor: isHovered ? '#4A90E2' : '#357ABD', 
+                            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                        }}
+                        disabled={loading}
+                    >
                         Download Grayscale Images
                     </button>
                 </div>
